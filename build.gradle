@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id "edu.sc.seis.launch4j" version "4.0.0"
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'io.github.goooler.shadow' version '8.1.8'
 }
 
 java {
@@ -36,23 +36,28 @@ dependencies {
     implementation 'com.bennyhuo.kotlin:kotlinp:1.8.10'
 }
 
-var mainClassName = 'com.mohistmc.mowudecomp.MoWuDecomp'
+var mainClass = 'com.mohistmc.mowudecomp.MoWuDecomp'
 
-jar {
+tasks.named('jar', Jar).configure {
     manifest {
-        attributes(
+        attributes([
                 'Premain-Class': 'com.mohistmc.mowudecomp.JarLoader',
                 'Launcher-Agent-Class': 'com.mohistmc.mowudecomp.JarLoader',
-                'Main-Class': mainClassName
-        )
+                'Main-Class': 'com.mohistmc.mowudecomp.MoWuDecomp'
+        ] as LinkedHashMap)
     }
 }
 
-jar.dependsOn(shadowJar)
+shadowJar {
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    exclude 'META-INF/*.EC'
+}
 
 
 launch4j {
-    mainClassName = mainClassName
+    mainClassName = mainClass
     icon = "${projectDir}/mowudecomp.ico"
     jarTask = project.tasks.shadowJar
 }
